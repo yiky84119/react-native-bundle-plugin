@@ -1,0 +1,25 @@
+{
+  "name": "react-native-bundle-plugin",
+  "version": "1.0.0",
+  "description": "Load single bundle for React Native apps.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yiky84119/react-native-bundle-plugin.git"
+  },
+  "keywords": [
+    "react-native",
+    "share",
+    "multiple",
+    "component"
+  ],
+  "author": "Nevo",
+  "license": "Apache License",
+  "bugs": {
+    "url": "https://github.com/yiky84119/react-native-bundle-plugin/issues"
+  },
+  "homepage": "https://github.com/yiky84119/react-native-bundle-plugin#readme"
+}
