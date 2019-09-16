@@ -7,12 +7,12 @@
 //
 #import <React/RCTLog.h>
 #import <React/RCTConvert.h>
+#import <React/RCTRootView.h>
 
+#import "RNBundlePluginManager.h"
 #import "RNBundlePlugin.h"
 
 @implementation RNBundlePlugin
-
-NSString* mName;
 
 RCT_EXPORT_MODULE();
 
@@ -21,9 +21,36 @@ RCT_EXPORT_MODULE();
     return dispatch_get_main_queue();
 }
 
-RCT_EXPORT_METHOD(share:(NSArray *)shareArray shareWithResolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject) {
-    NSStringArray* strArray = [RCTConvert NSStringArray:shareArray];
-    
-    resolve(@"test");
+RCT_EXPORT_METHOD(load:(NSString *)bundleURL moduleName:(NSString *)moduleName
+                  initialProperties:(NSDictionary *)props
+                  launchOptions:(NSDictionary *)options callback:(RCTResponseSenderBlock)callback) {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        RCTRootView *rootView = [[RCTRootView alloc] initWithBundleURL:[NSURL URLWithString:bundleURL]
+                                                            moduleName:moduleName
+                                                     initialProperties:props
+                                                         launchOptions:options];
+        self.mUINavigationController = [[UINavigationController alloc] init];
+        self.mUINavigationController.view = rootView;
+        self.mCallback = callback;
+        
+        [RNBundlePluginManager shareInstance].plugin = self;
+       
+        [[UIApplication sharedApplication].delegate.window.rootViewController presentViewController: self.mUINavigationController animated: NO completion: nil];
+    });
+}
+
+RCT_EXPORT_METHOD(unload:(NSDictionary *)props) {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if (![RNBundlePluginManager shareInstance].plugin.mUINavigationController) {
+            if ([RNBundlePluginManager shareInstance].plugin.mCallback) {
+                [RNBundlePluginManager shareInstance].plugin.mCallback(props ? @[props] : nil);
+            }
+        }
+        [[RNBundlePluginManager shareInstance].plugin.mUINavigationController dismissViewControllerAnimated: NO completion: ^{
+            if ([RNBundlePluginManager shareInstance].plugin.mCallback) {
+                [RNBundlePluginManager shareInstance].plugin.mCallback(props ? @[props] : nil);
+            }
+        }];
+    });
 }
 @end

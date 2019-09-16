@@ -14,6 +14,7 @@
 #endif
 
 @interface RNBundlePlugin : NSObject<RCTBridgeModule>
-
+@property (nonatomic, strong) UINavigationController *mUINavigationController;
+@property (nonatomic, strong) RCTResponseSenderBlock mCallback;
 
 @end
